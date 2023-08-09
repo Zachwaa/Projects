@@ -5,7 +5,7 @@ export const Box = styled.div`
     top: 0;
     color:white;
     width:100%;
-    position:fixed;
+    position:relative;
     z-index: 2;
     background-Color: #114B5F; 
 ` 
@@ -89,15 +89,16 @@ export const Genderoption = styled.a`
 
 export const Header = styled.div`
    
-
+    padding: 4px 0px 4px 0px;
     background-color:#456990;
     display:flex;
     justify-content: center;
     font-size: 0.8em;
-    padding: 4px;
+    width: 100%;
     &>* {
         padding-inline:6px;
     }
+    overflow: hidden;
 
 `
 

@@ -1,5 +1,5 @@
 import React,{memo,useContext,useRef,useState} from "react"
-import { Navigation,Logo,Box,Nav,Styledlink,Searchoptions,Genderoption,Gender,Option,Header,Popup,Margin } from "./navStyle"
+import { Navigation,Logo,Box,Nav,Styledlink,Searchoptions,Genderoption,Gender,Option,Header,Popup } from "./navStyle"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart,faUser,faShoppingBasket,faTruck,faHouse,faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import Searchbar from "./searchBar"
@@ -7,35 +7,32 @@ import Loginform from "./loginForm"
 import {User} from "../../index"
 import axios from "axios"
 
-const Navbar = ({handleSubmit}) => {
+const Navbar = () => {
 
     const [show,showForm] = useState([]);
-    const search = ["New In","Shorts","Cargos","Hoodies","T-Shirts","Jewerly & Accessories"];
+    const search = ["New In","Shorts","Shoes","Hoodies","T-Shirts","Jewerly & Accessories"];
     const logInForm = e => {
-        showForm(show.concat(<Loginform handleSubmit = {handleSubmit}/>))
+        document.body.style.overflow = "hidden"
+        showForm(show.concat(<Loginform/>))
     } 
     const ref = useRef(null);
     const verified = useContext(User)
- //   const [boxHeight,changeHeight] = useState(0);
-   
-  //  useEffect(()=>{
-      //  changeHeight(ref.current.clientHeight)
-   // })
+ 
    async function logOut (){
-        handleSubmit(false)
-        await axios.post("/api/logout",
-                { 
-                    "Content-Type": "application/json",
-                    "withCredentials":true
-                }
-            )
+        try {
+            await axios.post("/api/logout")
+            window.location.reload(true)
+        
+        } catch (err){
+            console.log(err)
+ }
    } 
 
     return (
         <>
             <Box ref={ref}>
                 <Header>
-                    <Popup><FontAwesomeIcon icon={faTruck}/>New Deal! 50% off</Popup>
+                    <Popup><FontAwesomeIcon icon={faTruck}/>New Deal! 50% off</Popup> 
                 </Header>
                 <Nav>
                     <Gender>
@@ -47,10 +44,10 @@ const Navbar = ({handleSubmit}) => {
                     <Searchbar />
                     <Navigation>
                         <Styledlink to="/home" ><FontAwesomeIcon icon={faHouse}/></Styledlink>
-                        {verified ? (
+                        {verified ?     <Styledlink onClick={logOut}><FontAwesomeIcon icon={faRightFromBracket}/></Styledlink>
+                        : (
                             <Styledlink  onClick={logInForm}><FontAwesomeIcon icon={faUser} as="div"/>Sign In/Register</Styledlink>
-                         ) :
-                            <Styledlink onClick={logOut()}><FontAwesomeIcon icon={faRightFromBracket}/></Styledlink>
+                         ) 
                         
                         }
                         <Styledlink to="/wishlist" ><FontAwesomeIcon icon={faHeart}/></Styledlink>
@@ -58,12 +55,11 @@ const Navbar = ({handleSubmit}) => {
                     </Navigation>
                 </Nav>
                 <Searchoptions>
-                    {search.map((opt) => <Option key={opt}>{opt}</Option>)}
+                    {search.map((opt) => <Option key={opt} to={`/shop`} >{opt}</Option>)}
                 </Searchoptions>
             </Box>
             {show}
-            <Margin /*height={boxHeight}*/ ></Margin>
-        
+
         </>
 
     )

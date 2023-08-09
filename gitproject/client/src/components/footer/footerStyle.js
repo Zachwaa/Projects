@@ -4,7 +4,7 @@ import styled from 'styled-components';
 export const Box = styled.div`
     background-color: #114B5F;
     bottom: 0;
-    position: absolute;
+    position: relative;
     width:100%;
     display: flex;
     flex-direction: column; 

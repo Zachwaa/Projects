@@ -1,19 +1,21 @@
 import React,{useState,useRef} from "react";
 import { Link } from "react-router-dom";
 import Overlay from "../overlay"
-import { faEye } from '@fortawesome/free-solid-svg-icons'
+import { faEye,faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { Title,Section,Form,Submit,Switch,Header,Sector,Input,Account,Check,Icon,Error } from "./loginFormStyle";
 import axios from "axios";
 
-const Loginform = ({handleSubmit}) => {
+const Loginform = () => {
 
     const [termsConditions,tickTerms] = useState(""),
         [passwordWeak, passwordWeakChange] = useState(""),
         [emailMatch, emailMatching] = useState(""),
         [passwordMatch, passwordMatching] = useState(""),
+        [detailsWrong,changeDetailsWrong] = useState(""),
         [show,setShow] = useState("password"),
         [CreateNewOpen, setCreate] = useState(false),
         [isOpen, setIsOpen] = useState(true),
+        [eyeOpen, setEyeOpen] = useState(faEyeSlash),
         email = useRef(),
         conEmail = useRef(),
         conPassword = useRef(),
@@ -23,9 +25,11 @@ const Loginform = ({handleSubmit}) => {
         term = useRef()
 
 
-
-
-    function toggleOverlay (e) {setIsOpen(!isOpen);};
+    function toggleOverlay (e) {
+        setIsOpen(!isOpen);
+        document.body.style.overflow = "auto"
+        
+    };
 
     function createNewAccount() {setCreate(true);}
 
@@ -33,6 +37,7 @@ const Loginform = ({handleSubmit}) => {
    
     function showText(){
         setShow(show === "password" ? "text" : "password")
+        setEyeOpen(eyeOpen === faEye ? faEyeSlash : faEye)
     }
 
     function checkPasswordValidity(pass) {
@@ -59,14 +64,18 @@ const Loginform = ({handleSubmit}) => {
                     "withCredentials":true
                 }
             )
-          //  console.log(data.data)
-          
-            handleSubmit(data.data.admin)
-           
+            if (data.data !== "invalid Credentials"){
+                toggleOverlay()
+                window.location.reload(true)
+           } else {
+             changeDetailsWrong("Email or Password is incorrect")
+           }
+
+            
         } catch (err){
             console.log(err)
         }
-        toggleOverlay()
+        
     }
 
     function validateForm(email,password,conPassword,conEmail,terms){
@@ -129,7 +138,6 @@ const Loginform = ({handleSubmit}) => {
                                 <Section val="password" key ="password">
                                     <div style={{display:"flex",alignItems:"center",position:"relative"}}>
                                         <Input type={show} placeholder="Password..." name="password" size="30"ref={Password} />
-                                        <Icon icon={faEye} onClick={showText}></Icon>
                                     </div>
                                 </Section>
                                 <Error>{passwordWeak}</Error>
@@ -158,10 +166,10 @@ const Loginform = ({handleSubmit}) => {
                                 <Section val="password" key="password">
                                     <div style={{display:"flex",alignItems:"center",position:"relative"}}>
                                         <Input type={show} placeholder="Password..." name="password" size="30" ref={pass}/>
-                                        <Icon icon={faEye} onClick={showText}></Icon>
+                                        <Icon icon={eyeOpen} onClick={showText}></Icon>
                                     </div>
-                                    
                                 </Section>
+                                <Error>{detailsWrong}</Error>
                                 <Section val="remember" key="remember">
                                 <Check type="checkbox" name="remember"></Check>
                                     <label>Remember Me</label>
